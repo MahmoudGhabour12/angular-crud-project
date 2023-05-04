@@ -1,0 +1,127 @@
+<p-toast></p-toast>
+<div class="card m-2" #displayTable>
+  <p-table
+    class="m-2"
+    responsiveLayout="stack"
+    #dt
+    [value]="units"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['arabicName', 'englishName']"
+    [(selection)]="selectedUnits"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+    [loading]="loading"
+    [totalRecords]="totalRecords"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="caption">
+      <p-toolbar>
+        <div class="form-group col-12 d-flex justify-content-end flex-column flex-sm-row mt-2">
+          <button
+            pButton
+            pRipple
+            label="Add"
+            icon="pi pi-plus"
+            class="p-button-success mr-2"
+            (click)="addUnit()"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Delete"
+            icon="pi pi-trash"
+            class="p-button-danger"
+            (click)="deleteSelectedUnits()"
+            [disabled]="!selectedUnits || !selectedUnits.length"
+          ></button>
+        </div>
+      </p-toolbar>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 4rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th>
+          <div class="flex justify-content-center align-items-center">
+            Arabic name
+            <p-columnFilter type="text" field="arabicName" display="menu"></p-columnFilter>
+          </div>
+        </th>
+        <th>
+          <div class="flex justify-content-center align-items-center">
+            English name
+            <p-columnFilter type="text" field="englishName" display="menu"></p-columnFilter>
+          </div>
+        </th>
+
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-unit>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="unit"></p-tableCheckbox>
+        </td>
+        <td>{{ unit.arabicName }}</td>
+        <td>{{ unit.englishName }}</td>
+
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            (click)="editUnit(unit)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-warning"
+            (click)="deleteUnit(unit)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  [(visible)]="unitDialog"
+  [style]="{ width: '450px' }"
+  header="Product details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="arabicName">Arabic name</label>
+      <input type="text" pInputText id="arabicName" [(ngModel)]="unit.arabicName" required autofocus />
+      <small class="p-error" *ngIf="submitted && !unit.arabicName">Arabic name is required</small>
+    </div>
+    <div class="field">
+      <label for="englishName">English name</label>
+      <input type="text" pInputText id="englishName" [(ngModel)]="unit.englishName" required />
+      <small class="p-error" *ngIf="submitted && !unit.englishName">English name is required</small>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUnit()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [breakpoints]="{ '960px': '75vw', '640px': '100vw' }" [style]="{ width: '50vw' }"></p-confirmDialog>
+
+<!-- no items template starts -->
+<div class="m-5" style="text-align: center" *ngIf="!units">
+  <p-card [style]="{ background: 'lightblue' }">
+    <h3>There is no products</h3>
+  </p-card>
+</div>
+<!-- no items template ends -->
